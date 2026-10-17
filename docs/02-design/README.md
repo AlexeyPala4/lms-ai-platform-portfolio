@@ -20,7 +20,7 @@
 Моделирует пошаговый процесс создания нового задания преподавателем. 
 Диаграмма отражает валидацию данных, проверку на дубликаты названий в базе данных и логику сохранения задания.
 
-<img src="./activity-create-task.png" alt="Activity Diagram" width="800" style="background-color: white; padding: 10px; border-radius: 5px;" />
+<img src="./activity-create-task.png" alt="Activity Diagram" width="600" style="background-color: white; padding: 10px; border-radius: 5px;" />
 
 
 ## 3. Диаграмма последовательности (Sequence)
@@ -43,4 +43,4 @@
 
 Связи реализованы через внешние ключи (Foreign Key) и отношения «многие-ко-многим» (Many-to-Many) для гибкого назначения заданий на группы.
 
-<img src="./database-er.png" alt="Database ER Diagram" style="background-color: white; padding: 10px; border-radius: 5px;" />
+<img src="./database-er.png" alt="Database ER Diagram" width="600" style="background-color: white; padding: 10px; border-radius: 5px;" />
