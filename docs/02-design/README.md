@@ -20,7 +20,7 @@
 Моделирует пошаговый процесс создания нового задания преподавателем. 
 Диаграмма отражает валидацию данных, проверку на дубликаты названий в базе данных и логику сохранения задания.
 
-![Activity Diagram](./activity-create-task.png)
+<img src="./activity-create-task.png" alt="Activity Diagram" width="800" style="background-color: white; padding: 10px; border-radius: 5px;" />
 
 
 ## 3. Диаграмма последовательности (Sequence)
