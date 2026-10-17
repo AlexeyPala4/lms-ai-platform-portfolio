@@ -48,7 +48,7 @@
 * [Тест-кейсы (метод «черного ящика»)](./docs/03-testing/test-cases.md)
 
 ### 4. Презентация (Presentation)
-* [Презентация защиты проекта (PDF)](./docs/04-presentation/diploma-presentation.pdf)
+* [Презентация защиты проекта (PDF)](https://github.com/AlexeyPala4/lms-ai-platform-portfolio/raw/main/docs/04-presentation/diploma-presentation.pdf)
 
 ---
 *Автор: Корсаков Алексей 
