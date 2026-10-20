@@ -35,6 +35,6 @@
 
 ## Артефакты аналитика
 1. **Требования:** [Список функций и Use Cases](./01-requirements/user-stories.md)
-2. **Проектирование:** [BPMN/Sequence диаграммы, ER-модель, архитектура](./02-design/README.md)
+2. **Проектирование:** [Sequence диаграммы, ER-модель, архитектура](./02-design/README.md)
 3. **Тестирование:** [Тест-кейсы (черный ящик)](./03-testing/test-cases.md)
 4. **Презентация:** [Презентация защиты проекта](./04-presentation/diploma-presentation.pdf)
