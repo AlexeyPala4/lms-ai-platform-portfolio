@@ -1,0 +1,218 @@
+openapi: 3.0.0
+info:
+  title: API Сервиса управления лимитами и блокировками B2B
+  description: |
+    Сервис предназначен для проверки платежных операций на соответствие лимитам, 
+    а также для управления лимитами и блокировками карт сотрудников.
+  version: 1.0.0
+
+servers:
+  - url: https://api.bank.ru/v1
+    description: Продакшн сервер
+
+tags:
+  - name: Transactions
+    description: Проверка транзакций (внутренний API для платежного шлюза)
+  - name: Limits
+    description: Управление лимитами
+  - name: Cards
+    description: Управление блокировками карт
+  - name: History
+    description: История операций
+
+paths:
+  /transactions/check:
+    post:
+      tags:
+        - Transactions
+      summary: Проверка возможности проведения транзакции
+      description: Вызывается платежным шлюзом перед списанием средств. Проверяет лимиты, блокировки и расписание.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - card_id
+                - amount
+                - currency
+              properties:
+                card_id:
+                  type: string
+                  example: "4276********1234"
+                amount:
+                  type: number
+                  format: float
+                  example: 15000.00
+                currency:
+                  type: string
+                  enum: [RUB, USD, EUR]
+                  example: RUB
+                merchant:
+                  type: string
+                  example: "OZON"
+      responses:
+        '200':
+          description: Транзакция разрешена
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "ALLOWED"
+        '403':
+          description: Транзакция отклонена (заблокирована или превышен лимит)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_code:
+                    type: string
+                    enum: [CARD_BLOCKED, LIMIT_EXCEEDED, OUT_OF_WORKING_HOURS]
+                    example: LIMIT_EXCEEDED
+                  message:
+                    type: string
+                    example: "Превышен дневной лимит. Доступно: 5000 RUB."
+
+  /limits:
+    post:
+      tags:
+        - Limits
+      summary: Создание нового лимита для сотрудника
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - employee_id
+                - amount
+                - period
+              properties:
+                employee_id:
+                  type: integer
+                  example: 101
+                amount:
+                  type: number
+                  format: float
+                  example: 50000.00
+                currency:
+                  type: string
+                  enum: [RUB, USD, EUR]
+                  example: RUB
+                period:
+                  type: string
+                  enum: [DAY, MONTH]
+                  example: DAY
+                working_hours_only:
+                  type: boolean
+                  example: true
+      responses:
+        '201':
+          description: Лимит успешно создан (отправлен на подтверждение)
+        '400':
+          description: Ошибка валидации (превышен лимит банка или компании)
+
+  /limits/{limit_id}:
+    put:
+      tags:
+        - Limits
+      summary: Изменение существующего лимита
+      parameters:
+        - name: limit_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                amount:
+                  type: number
+                  example: 70000.00
+      responses:
+        '200':
+          description: Лимит обновлен, отправлен на подтверждение (Maker-Checker)
+
+  /cards/{card_id}/block:
+    post:
+      tags:
+        - Cards
+      summary: Мгновенная блокировка карты
+      parameters:
+        - name: card_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Карта успешно заблокирована
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "BLOCKED"
+                  blocked_at:
+                    type: string
+                    format: date-time
+
+  /employees/{employee_id}/transactions:
+    get:
+      tags:
+        - History
+      summary: Получение истории транзакций сотрудника
+      parameters:
+        - name: employee_id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: date_from
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: date_to
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Список транзакций
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    transaction_id:
+                      type: integer
+                    amount:
+                      type: number
+                    currency:
+                      type: string
+                    merchant:
+                      type: string
+                    status:
+                      type: string
+                      enum: [SUCCESS, DECLINED]
+                    decline_reason:
+                      type: string
+                    created_at:
+                      type: string
+                      format: date-time
